@@ -4,6 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.example.todo.pojos.responses.TodoItemDto;
+
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -27,5 +29,18 @@ public class TodoApplication {
 				.description("SpringShop Wiki Documentation")
 				.url("https://springshop.wiki.github.org/docs"));
 	}
+
+	/*@Bean
+	public JMapperAPI getMapperApi(){
+		JMapperAPI mapper = new JMapperAPI()
+		.add(new MappedClass(TodoItemDto.class)
+			//.add(new Attribute("id").value("id"))
+			//.add(new Attribute("title").value("title"))	
+			//.add(new Attribute("description").value("description"))
+			//.add(new Attribute("isDone").value("isDone"))
+		);
+		
+		return mapper; 
+	}*/
 
 }

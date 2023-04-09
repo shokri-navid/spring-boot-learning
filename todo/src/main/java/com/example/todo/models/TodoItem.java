@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 public class TodoItem {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer Id; 
+    private Integer id; 
 
     private String title; 
 
@@ -25,6 +25,9 @@ public class TodoItem {
 
     private Date doneAt;
 
+    protected TodoItem() {
+        super();
+    }
     public TodoItem(String title, String description) {
         this.title = title;
         this.description = description;
@@ -35,11 +38,11 @@ public class TodoItem {
     }
 
     public Integer getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Integer id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getTitle() {

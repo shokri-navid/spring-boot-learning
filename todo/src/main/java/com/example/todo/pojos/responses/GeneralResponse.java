@@ -2,14 +2,14 @@ package com.example.todo.pojos.responses;
 
 import java.util.ArrayList;
 
-public class CommandResponse<T> {
+public class GeneralResponse<T> {
     
-    public CommandResponse(ArrayList<ErrorTemplate> errorTemplates) {
+    public GeneralResponse(ArrayList<ErrorTemplate> errorTemplates) {
         isSucceed = false;
         this.errorTemplates = errorTemplates;
     }
     
-    public CommandResponse(T data) {
+    public GeneralResponse(T data) {
         this.data = data;
         this.isSucceed = true;
     }  
