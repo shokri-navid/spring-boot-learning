@@ -1,9 +1,11 @@
 package com.example.todo.controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -79,9 +81,10 @@ public class TodoController {
         @RequestParam Integer pageNo, 
         @RequestParam String sorting){
             Pageable paging = PageRequest.of(pageNo, pageSize, Direction.ASC, sorting);
-            var result = todoRepository.findAll(paging);
-            var list  = result.map(x-> AutoTodoItemMapper.MAPPER.toDto(x)).toList();
-            return new ResponseEntity(new GeneralResponse(list), HttpStatusCode.valueOf(200));
+            Page result = todoRepository.findAll(paging);
+            List<TodoItem> list  = result.getContent();
+            var res = list.stream().map(x-> AutoTodoItemMapper.MAPPER.toDto(x)).toList(); 
+            return new ResponseEntity(new GeneralResponse(res), HttpStatusCode.valueOf(200));
         }
 
     
