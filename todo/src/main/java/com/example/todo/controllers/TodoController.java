@@ -1,19 +1,26 @@
 package com.example.todo.controllers;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.todo.dataAccess.TodoRepository;
 import com.example.todo.mapper.AutoTodoItemMapper;
 import com.example.todo.models.TodoItem;
 import com.example.todo.pojos.requests.CreateTodoItemRequest;
+import com.example.todo.pojos.requests.UpdateTodoItemRequest;
 import com.example.todo.pojos.responses.GeneralResponse;
 import com.example.todo.pojos.responses.TodoItemDto;
+import com.fasterxml.classmate.types.ResolvedInterfaceType;
 
 import jakarta.persistence.Id;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,5 +58,31 @@ public class TodoController {
         
         return new ResponseEntity(new GeneralResponse(res),HttpStatusCode.valueOf(200));
     }
+
+    @PutMapping(value="/{id}")
+    public @ResponseBody ResponseEntity UpdateTodoItem(@PathVariable Integer id, @RequestBody UpdateTodoItemRequest request){
+        var todo = todoRepository.findById(id); 
+        if (todo.isEmpty())
+        {
+            return new ResponseEntity(new GeneralResponse(""),HttpStatusCode.valueOf(404));
+        }
+        var main = todo.get(); 
+        main.setDescription(request.getDescription());
+        main.setTitle(request.getTitle());
+        todoRepository.save(main);
+        return new ResponseEntity(new GeneralResponse(""),HttpStatusCode.valueOf(404));
+    }
+
+    @GetMapping(value = "/")
+    public @ResponseBody ResponseEntity GetAllTodoItems(
+        @RequestParam Integer pageSize,
+        @RequestParam Integer pageNo, 
+        @RequestParam String sorting){
+            Pageable paging = PageRequest.of(pageNo, pageSize, Direction.ASC, sorting);
+            var result = todoRepository.findAll(paging);
+            var list  = result.map(x-> AutoTodoItemMapper.MAPPER.toDto(x)).toList();
+            return new ResponseEntity(new GeneralResponse(list), HttpStatusCode.valueOf(200));
+        }
+
     
 }
