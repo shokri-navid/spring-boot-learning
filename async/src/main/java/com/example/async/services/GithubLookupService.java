@@ -29,7 +29,7 @@ public class GithubLookupService {
         GithubUser result = null;
 
         try{
-            Thread.sleep(1000L);
+            Thread.sleep(5000L);
             result = restTemplate.getForObject(url, GithubUser.class);
         } catch (HttpClientErrorException e){
             logger.error(e.getMessage() +" - " + e.getStatusCode(), e);
