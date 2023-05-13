@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Description;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.todo.dataAccess.TodoRepository;
 import com.example.todo.mapper.AutoTodoItemMapper;
@@ -24,6 +26,9 @@ import com.example.todo.pojos.responses.GeneralResponse;
 import com.example.todo.pojos.responses.TodoItemDto;
 import com.fasterxml.classmate.types.ResolvedInterfaceType;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.persistence.Id;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @RestController
+@RequestMapping("todo")
 public class TodoController {
     @Autowired
     private TodoRepository todoRepository; 
@@ -44,6 +50,7 @@ public class TodoController {
 
     }
 
+    @Operation(summary = "Create a todo list item")
     @PostMapping(value = "/")
     public ResponseEntity createTodoItem(@RequestBody CreateTodoItemRequest request){
 
@@ -52,6 +59,7 @@ public class TodoController {
         return new ResponseEntity(new GeneralResponse<Integer>(todo.getId()), HttpStatusCode.valueOf(200)); 
     }
 
+    @Operation(summary = "Retrieve a Todo Item using its ID ")
     @GetMapping(value="/{id}")
     public @ResponseBody ResponseEntity getTodoItam(@PathVariable Integer id) {
         Optional<TodoItem> result = todoRepository.findById(id);
@@ -61,6 +69,7 @@ public class TodoController {
         return new ResponseEntity(new GeneralResponse(res),HttpStatusCode.valueOf(200));
     }
 
+    @Operation(summary = "Update Todo Item (only title and description)")
     @PutMapping(value="/{id}")
     public @ResponseBody ResponseEntity UpdateTodoItem(@PathVariable Integer id, @RequestBody UpdateTodoItemRequest request){
         var todo = todoRepository.findById(id); 
@@ -75,11 +84,12 @@ public class TodoController {
         return new ResponseEntity(new GeneralResponse(""),HttpStatusCode.valueOf(404));
     }
 
+    @Operation(summary = "Perform a query over Todo list ")
     @GetMapping(value = "/")
     public @ResponseBody ResponseEntity GetAllTodoItems(
-        @RequestParam Integer pageSize,
-        @RequestParam Integer pageNo, 
-        @RequestParam String sorting){
+        @RequestParam(defaultValue = "10") Integer pageSize,
+        @RequestParam(defaultValue = "0") Integer pageNo, 
+        @RequestParam(defaultValue = "createdAt") String sorting){
             Pageable paging = PageRequest.of(pageNo, pageSize, Direction.ASC, sorting);
             Page result = todoRepository.findAll(paging);
             List<TodoItem> list  = result.getContent();

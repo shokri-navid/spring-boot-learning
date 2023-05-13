@@ -18,26 +18,13 @@ public class TodoApplication {
 	@Bean
 	public OpenAPI springShopOpenAPI() {
 		return new OpenAPI()
-				.info(new Info().title("SpringShop API")
-				.description("Spring shop sample application")
+				.info(new Info().title("Sample Todo API")
+				.description("This is my first project using Java Spring Boot ")
 				.version("v0.0.1")
 				.license(new License().name("Apache 2.0").url("http://springdoc.org")))
-				.externalDocs(new ExternalDocumentation()
-				.description("SpringShop Wiki Documentation")
-				.url("https://springshop.wiki.github.org/docs"));
+				.externalDocs(new ExternalDocumentation());
+				//.description("SpringShop Wiki Documentation")
+				//.url("https://springshop.wiki.github.org/docs"));
 	}
-
-	/*@Bean
-	public JMapperAPI getMapperApi(){
-		JMapperAPI mapper = new JMapperAPI()
-		.add(new MappedClass(TodoItemDto.class)
-			//.add(new Attribute("id").value("id"))
-			//.add(new Attribute("title").value("title"))	
-			//.add(new Attribute("description").value("description"))
-			//.add(new Attribute("isDone").value("isDone"))
-		);
-		
-		return mapper; 
-	}*/
 
 }
