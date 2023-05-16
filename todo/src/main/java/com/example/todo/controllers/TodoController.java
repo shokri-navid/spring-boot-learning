@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.todo.dataAccess.TodoRepository;
 import com.example.todo.mapper.AutoTodoItemMapper;
+import com.example.todo.models.ItemStatus;
 import com.example.todo.models.TodoItem;
 import com.example.todo.pojos.requests.CreateTodoItemRequest;
 import com.example.todo.pojos.requests.UpdateTodoItemRequest;
 import com.example.todo.pojos.responses.GeneralResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -63,7 +65,7 @@ public class TodoController {
 
     @Operation(summary = "Update Todo Item (only title and description)")
     @PutMapping(value="/{id}")
-    public @ResponseBody ResponseEntity UpdateTodoItem(
+    public @ResponseBody ResponseEntity updateTodoItem(
         @PathVariable Integer id, 
         @RequestBody UpdateTodoItemRequest request){
         
@@ -76,12 +78,12 @@ public class TodoController {
             main.setDescription(request.getDescription());
             main.setTitle(request.getTitle());
             todoRepository.save(main);
-            return new ResponseEntity(new GeneralResponse(""),HttpStatusCode.valueOf(404));
+            return new ResponseEntity(new GeneralResponse(""),HttpStatusCode.valueOf(200));
         }
 
     @Operation(summary = "Perform a query over Todo list ")
     @GetMapping(value = "/")
-    public @ResponseBody ResponseEntity GetAllTodoItems(
+    public @ResponseBody ResponseEntity getAllTodoItems(
         @RequestParam(defaultValue = "10") Integer pageSize,
         @RequestParam(defaultValue = "0") Integer pageNo, 
         @RequestParam(defaultValue = "createdAt") String sorting){
@@ -92,6 +94,18 @@ public class TodoController {
             var res = list.stream().map(x-> AutoTodoItemMapper.MAPPER.toDto(x)).toList(); 
             return new ResponseEntity(new GeneralResponse(res), HttpStatusCode.valueOf(200));
         }
-
-    
+    @Operation(summary = "change done status of todo item")
+    @PutMapping(value = "/{id}/status/{status}")
+    public @ResponseBody ResponseEntity changeTodoStatus(@PathVariable int id, @PathVariable ItemStatus status){
+        var todo = todoRepository.findById(id); 
+            if (todo.isEmpty())
+            {
+                return new ResponseEntity(new GeneralResponse(""),HttpStatusCode.valueOf(404));
+            }
+            
+            TodoItem item = todo.get();
+            item.setStatus(status);
+            todoRepository.save(item);
+            return new ResponseEntity(new GeneralResponse(""),HttpStatusCode.valueOf(200));
+    }
 }

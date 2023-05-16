@@ -18,22 +18,28 @@ public class TodoItem {
 
     private String description; 
      
-    private Boolean isDone; 
-
     private Date createdAt; 
 
     private Date doneAt;
 
+    private ItemStatus status; 
+
+    public ItemStatus getStatus() {
+        return status;
+    }
+    public void setStatus(ItemStatus status) {
+        this.status = status;
+        if (status == ItemStatus.done){
+            doneAt = getNow();
+        }
+    }
     protected TodoItem() {
         super();
     }
     public TodoItem(String title, String description) {
         this.title = title;
         this.description = description;
-        isDone = false; 
-        createdAt =  java.util.Date
-        .from(LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .toInstant());
+        createdAt =  getNow();
     }
 
     public Integer getId() {
@@ -61,11 +67,7 @@ public class TodoItem {
     }
 
     public Boolean getIsDone() {
-        return isDone;
-    }
-
-    public void setIsDone(Boolean isDone) {
-        this.isDone = isDone;
+        return status == ItemStatus.done;
     }
 
     public Date getCreatedAt() {
@@ -80,8 +82,9 @@ public class TodoItem {
         return doneAt;
     }
 
-    public void setDoneAt(Date doneAt) {
-        this.doneAt = doneAt;
+    private Date getNow(){
+        return java.util.Date
+        .from(LocalDateTime.now().atZone(ZoneId.systemDefault())
+        .toInstant());
     }
-     
 }
